@@ -1,10 +1,12 @@
-FROM golang
+FROM golang:1.16
 
-ADD . /go/src/github.com/hunterlong/ethexporter
-RUN cd /go/src/github.com/hunterlong/ethexporter && go get
-RUN go install github.com/hunterlong/ethexporter
+ENV GO111MODULE=off
 
-ENV GETH https://mainnet.infura.io
+ADD . /go/src/github.com/akshar/ethexporter
+RUN cd /go/src/github.com/akshar/ethexporter && go get
+RUN go install github.com/akshar/ethexporter
+
+ENV GETH <geth-host>
 ENV PORT 9015
 
 RUN mkdir /app
