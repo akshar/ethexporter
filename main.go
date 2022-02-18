@@ -4,19 +4,19 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/ethclient"
 	"math/big"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 var (
 	allWatching []*Watching
 	port        string
-	updates     string
 	prefix      string
 	loadSeconds float64
 	totalLoaded int64
