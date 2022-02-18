@@ -1,18 +1,22 @@
-FROM golang:1.16
+# Build
+FROM golang:1.17.6-alpine as builder
 
-ENV GO111MODULE=off
+RUN apk add --no-cache git curl build-base
+ENV APP_SRC /usr/src/ethexporter/
+COPY . $APP_SRC
+WORKDIR $APP_SRC
 
-ADD . /go/src/github.com/akshar/ethexporter
-RUN cd /go/src/github.com/akshar/ethexporter && go get
-RUN go install github.com/akshar/ethexporter
+COPY addresses.txt /tmp/addresses.txt
+RUN go mod tidy  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o /tmp/ethexporter .
 
-ENV GETH <geth-host>
-ENV PORT 9015
 
-RUN mkdir /app
+# RUN
+FROM alpine:3.15
 WORKDIR /app
-ADD addresses.txt /app
+
+COPY --from=builder /tmp/ethexporter /app/
+COPY --from=builder /tmp/addresses.txt /app/addresses.txt
 
 EXPOSE 9015
 
-ENTRYPOINT /go/bin/ethexporter
+CMD [ "/app/ethexporter"]
